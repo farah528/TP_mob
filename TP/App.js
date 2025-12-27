@@ -1,48 +1,27 @@
-import { useEffect, useState, useContext } from "react";
-import { View, StyleSheet, ActivityIndicator } from "react-native";
-import { initDB } from "./services/database";
-import { ThemeProvider, ThemeContext } from "./context/ThemeContext";
-import TodoListOfflineScreen from "./screens/TodoListOfflineScreen";
-function MainApp() {
-   const { theme } = useContext(ThemeContext);
-return (
- <View
- style={[
- styles.container,
- theme === "dark" ? styles.dark : styles.light,
- ]}
- >
- <TodoListOfflineScreen />
- </View>
-);
+import React, { useContext } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import AuthProvider, { AuthContext } from "./context/AuthContext";
+import { ThemeProvider } from "./context/ThemeContext";
+import AppDrawer from "./navigation/AppDrawer";
+import LoginScreen from "./screens/LoginScreen";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
+
+function RootNavigator() {
+   const { user } = useContext(AuthContext);
+   return user ? <AppDrawer /> : <LoginScreen />;
 }
+
 export default function App() {
-const [dbReady, setDbReady] = useState(false);
-useEffect(() => {
- const prepareDb = async () => {
- await initDB(); // attendre SQLite
- setDbReady(true); // OK pour afficher l’app
- };
- prepareDb();
-}, []);
-if (!dbReady) {
- return <ActivityIndicator size="large" />;
+   return (
+      <Provider store={store}>
+         <AuthProvider>
+            <ThemeProvider>
+               <NavigationContainer>
+                  <RootNavigator />
+               </NavigationContainer>
+            </ThemeProvider>
+         </AuthProvider>
+      </Provider>
+   );
 }
-return (
- <ThemeProvider>
- <MainApp />
- </ThemeProvider>
-);
-}
-const styles = StyleSheet.create({
-container: {
- flex: 1,
- paddingTop: 40,
-},
-light: {
- backgroundColor: "#ffffff",
-},
-dark: {
- backgroundColor: "#121212",
-},
-});
