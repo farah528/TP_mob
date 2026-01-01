@@ -1,27 +1,16 @@
-import React, { useContext } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import AuthProvider, { AuthContext } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
-import AppDrawer from "./navigation/AppDrawer";
-import LoginScreen from "./screens/LoginScreen";
-import { Provider } from "react-redux";
-import { store } from "./store/store";
-
-function RootNavigator() {
-   const { user } = useContext(AuthContext);
-   return user ? <AppDrawer /> : <LoginScreen />;
-}
-
+import { AuthProvider } from "./context/AuthContext";
+import AppStack from "./navigation/AppStack";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 export default function App() {
-   return (
-      <Provider store={store}>
-         <AuthProvider>
-            <ThemeProvider>
-               <NavigationContainer>
-                  <RootNavigator />
-               </NavigationContainer>
-            </ThemeProvider>
-         </AuthProvider>
-      </Provider>
-   );
+return (
+ <SafeAreaProvider>
+ <ThemeProvider>
+ <AuthProvider>
+ <AppStack />
+ </AuthProvider>
+ </ThemeProvider>
+ </SafeAreaProvider>
+);
 }
+
